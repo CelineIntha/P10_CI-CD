@@ -25,7 +25,7 @@ jobs:
           mvn clean verify
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: back/target/site/jacoco/
@@ -33,14 +33,23 @@ jobs:
 
   test-front:
     runs-on: ubuntu-latest
+    name: Run front-end tests
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Build front
+
+      - name: Run tests with coverage
         run: |
           cd front
           npm ci
-          npm run build
+          npm run test -- --watch=false --code-coverage
+
+      - name: Upload frontend coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: front/coverage/
