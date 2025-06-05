@@ -8,11 +8,15 @@ import { Joke } from '../model/joke.model';
 })
 export class JokesService {
 
-  private pathService = 'api/joke';
-
+  private pathService: string;
   private subject: BehaviorSubject<Joke | null> = new BehaviorSubject<Joke | null>(null);
 
   constructor(private httpClient: HttpClient) {
+    const isLocal: boolean = window.location.hostname === 'localhost';
+    this.pathService = isLocal
+      ? 'http://localhost:8080/api/joke'
+      : 'http://bobapp-back:8080/api/joke';
+
     this.getRandomJoke();
   }
 
@@ -20,7 +24,7 @@ export class JokesService {
     this.httpClient.get<Joke>(this.pathService).subscribe((joke: Joke) => this.subject.next(joke));
   }
 
-  public joke$(): Observable<Joke | null > {
+  public joke$(): Observable<Joke | null> {
     return this.subject.asObservable();
   }
 }

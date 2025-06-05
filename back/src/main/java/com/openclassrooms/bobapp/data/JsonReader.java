@@ -17,7 +17,7 @@ public class JsonReader {
     private final ObjectMapper mapper = new ObjectMapper();
     private JsonNode jsonFile;
 
-    private JsonReader() {
+    public JsonReader() {
         try {
             this.getJsonFile();
         } catch (IOException | URISyntaxException e) {
