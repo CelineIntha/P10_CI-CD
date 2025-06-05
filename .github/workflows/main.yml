@@ -53,3 +53,32 @@ jobs:
         with:
           name: frontend-coverage
           path: front/coverage/
+
+  test-report:
+    name: Test reporting summary
+    needs: [ test-back, test-front ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download back-end report
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          path: reports/backend
+
+      - name: Download front-end report
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: reports/frontend
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        with:
+          name: tests reports
+          path: |
+            reports/backend/jacoco.xml
+            reports/frontend/coverage-final.json
+          reporter: java-jacoco
+          fail-on-error: false
+
