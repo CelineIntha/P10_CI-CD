@@ -9,17 +9,27 @@ on:
 jobs:
   test-back:
     runs-on: ubuntu-latest
+    name: Run Back-End Tests
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Build back
+
+      - name: Run tests with coverage Jacoco
         run: |
           cd back
-          mvn clean install
+          mvn clean verify
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-report
+          path: back/target/site/jacoco/
+
 
   test-front:
     runs-on: ubuntu-latest
