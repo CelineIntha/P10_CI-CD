@@ -1,0 +1,35 @@
+name: Build Java + Angular
+
+on:
+  push:
+    branches: [ main, feature/ci-cd ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-back:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+      - name: Build back
+        run: |
+          cd back
+          mvn clean install
+
+  test-front:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Build front
+        run: |
+          cd front
+          npm ci
+          npm run build
