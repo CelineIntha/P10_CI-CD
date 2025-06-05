@@ -46,7 +46,7 @@ jobs:
         run: |
           cd front
           npm ci
-          npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless --no-sandbox
+          npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
 
       - name: Upload frontend coverage report
         uses: actions/upload-artifact@v4
