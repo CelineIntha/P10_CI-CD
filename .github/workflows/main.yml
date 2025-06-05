@@ -24,12 +24,17 @@ jobs:
           cd back
           mvn clean verify
 
+      - name: Upload JUnit test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-report
+          path: back/target/surefire-reports/
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: back/target/site/jacoco/
-
 
   test-front:
     runs-on: ubuntu-latest
@@ -58,28 +63,19 @@ jobs:
     name: Test reporting summary
     needs: [ test-back, test-front ]
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-      - name: Download back-end report
+
+      - name: Download JUnit report
         uses: actions/download-artifact@v4
         with:
-          name: jacoco-report
-          path: reports/backend
+          name: junit-report
+          path: reports/junit
 
-      - name: Download front-end report
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-coverage
-          path: reports/frontend
-
-      - name: Publish test results
+      - name: Publish JUnit test results
         uses: dorny/test-reporter@v1
         with:
-          name: tests reports
-          path: |
-            reports/backend/jacoco.xml
-            reports/frontend/coverage-final.json
-          reporter: java-jacoco
+          name: JUnit Tests Summary
+          path: reports/junit/*.xml
+          reporter: java-junit
           fail-on-error: false
-
