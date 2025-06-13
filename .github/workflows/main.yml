@@ -1,4 +1,4 @@
-name: Build Java + Angular
+name: Build & test - Java + Angular
 
 on:
   push:
@@ -14,9 +14,11 @@ permissions:
 jobs:
   test-back:
     runs-on: ubuntu-latest
-    name: Run back-end tests
+    name: Back-end - tests & coverage
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -48,7 +50,7 @@ jobs:
           name: junit-report
           path: back/target/surefire-reports/
 
-      - name: Upload coverage report
+      - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
@@ -56,30 +58,32 @@ jobs:
 
   test-front:
     runs-on: ubuntu-latest
-    name: Run front-end tests
+    name: Front-end - tests & coverage
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Run tests with coverage
-        run: |
-          cd front
-          npm ci
-          npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
+      - name: Install dependencies
+        working-directory: front
+        run: npm ci
 
-      - name: Upload frontend coverage report
+      - name: Run tests with coverage
+        working-directory: front
+        run: npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
+
+      - name: Upload front-end coverage report
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage
           path: front/coverage/
 
   test-report:
-    name: Test reporting summary
-    needs: [ test-back, test-front ]
+    name: Back-end JUnit report summary
+    needs: [ test-back ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -99,7 +103,7 @@ jobs:
           fail-on-error: false
 
   sonarcloud-front:
-    name: Analyze front-end with SonarCloud
+    name: SonarCloud analysis - front-end
     runs-on: ubuntu-latest
     needs: [ test-front ]
     steps:
@@ -113,9 +117,8 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: |
-          cd front
-          npm ci
+        working-directory: front
+        run: npm ci
 
       - name: Run SonarCloud scanner for front-end
         working-directory: front
