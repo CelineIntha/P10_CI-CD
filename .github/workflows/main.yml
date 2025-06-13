@@ -1,4 +1,4 @@
-name: Build Java + Angular
+name: Build & test - Java + Angular
 
 on:
   push:
@@ -11,24 +11,38 @@ permissions:
   actions: read
   checks: write
 
-
 jobs:
   test-back:
     runs-on: ubuntu-latest
-    name: Run back-end tests
+    name: Back-end - tests & coverage
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
-      - name: Run tests with coverage Jacoco
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run tests with coverage and SonarCloud (back-end)
+        working-directory: back
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          cd back
-          mvn clean verify
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=CelineIntha_P10_CI-CD \
+            -Dsonar.organization=celineintha \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Upload JUnit test report
         uses: actions/upload-artifact@v4
@@ -36,7 +50,7 @@ jobs:
           name: junit-report
           path: back/target/surefire-reports/
 
-      - name: Upload coverage report
+      - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
@@ -44,30 +58,32 @@ jobs:
 
   test-front:
     runs-on: ubuntu-latest
-    name: Run front-end tests
+    name: Front-end - tests & coverage
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Run tests with coverage
-        run: |
-          cd front
-          npm ci
-          npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
+      - name: Install dependencies
+        working-directory: front
+        run: npm ci
 
-      - name: Upload frontend coverage report
+      - name: Run tests with coverage
+        working-directory: front
+        run: npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
+
+      - name: Upload front-end coverage report
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage
           path: front/coverage/
 
   test-report:
-    name: Test reporting summary
-    needs: [ test-back, test-front ]
+    name: Back-end JUnit report summary
+    needs: [ test-back ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -85,3 +101,36 @@ jobs:
           path: reports/junit/*.xml
           reporter: java-junit
           fail-on-error: false
+
+  sonarcloud-front:
+    name: SonarCloud analysis - front-end
+    runs-on: ubuntu-latest
+    needs: [ test-front ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        working-directory: front
+        run: npm ci
+
+      - name: Run SonarCloud scanner for front-end
+        working-directory: front
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=celineintha-p10-ci-cd-front \
+            -Dsonar.organization=celineintha \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.sources=src \
+            -Dsonar.tests=src \
+            -Dsonar.test.inclusions=**/*.spec.ts \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
