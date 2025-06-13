@@ -46,7 +46,4 @@ jobs:
         working-directory: back
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-          -Dsonar.projectKey=CelineIntha_P10_CI-CD \
-          -Dsonar.organization=celineintha \
-          -Dsonar.host.url=https://sonarcloud.io
+        run: mvn clean verify sonar:sonar -Dsonar.projectKey=CelineIntha_P10_CI-CD -Dsonar.organization=celineintha -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
