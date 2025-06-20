@@ -42,7 +42,7 @@ jobs:
             -Dsonar.projectKey=CelineIntha_P10_CI-CD \
             -Dsonar.organization=celineintha \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Upload JUnit test report
         uses: actions/upload-artifact@v4
@@ -126,14 +126,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           npx sonar-scanner \
-            -Dsonar.projectKey=celineintha-p10-ci-cd-front \
-            -Dsonar.organization=celineintha \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.sources=src \
-            -Dsonar.tests=src \
-            -Dsonar.test.inclusions=**/*.spec.ts \
-            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.projectKey=celineintha-p10-ci-cd-front \
+          -Dsonar.organization=celineintha \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.sources=src/app \
+          -Dsonar.tests=src/app \
+          -Dsonar.test.inclusions=**/*.spec.ts \
+          -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info \
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
   docker-publish:
     name: Docker build & push to Docker hub
