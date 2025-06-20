@@ -3,6 +3,8 @@ name: Build & test - Java + Angular
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ main, ci-cd/report-and-sonar-fix ]
 
 permissions:
   contents: read
@@ -133,13 +135,10 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-
-
   docker-publish:
     name: Docker build & push to Docker hub
     runs-on: ubuntu-latest
-    needs: [ test-back, test-front, sonarcloud-front ]
-    if: ${{ success() }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
 
@@ -156,3 +155,4 @@ jobs:
         working-directory: front
         run: |
           docker build -t celineintha/p10-front:latest .
+          docker push celineintha/p10-front:latest
