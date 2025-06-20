@@ -120,21 +120,28 @@ jobs:
         working-directory: front
         run: npm ci
 
+      - name: Download frontend coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: coverage/
+
       - name: Run SonarCloud scanner for front-end
         working-directory: front
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           npx sonar-scanner \
-          -Dsonar.projectKey=celineintha-p10-ci-cd-front \
-          -Dsonar.organization=celineintha \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.sources=src/app \
-          -Dsonar.inclusions=**/*.ts \
-          -Dsonar.tests=src/app \
-          -Dsonar.test.inclusions=**/*.spec.ts \
-          -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.projectKey=celineintha-p10-ci-cd-front \
+            -Dsonar.organization=celineintha \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.sources=src/app \
+            -Dsonar.inclusions=**/*.ts \
+            -Dsonar.tests=src/app \
+            -Dsonar.test.inclusions=**/*.spec.ts \
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
 
   docker-publish:
     name: Docker build & push to Docker hub
