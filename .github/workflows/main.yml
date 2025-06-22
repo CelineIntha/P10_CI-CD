@@ -88,10 +88,6 @@ jobs:
         with:
           name: frontend-test-html-report
           path: front/coverage/*/index.html
-      - name: Debug coverage files
-        working-directory: front
-        run: ls -R coverage
-
 
       - name: Run SonarCloud scanner for front-end
         working-directory: front
