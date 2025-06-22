@@ -138,7 +138,7 @@ jobs:
             -Dsonar.sources=src \
             -Dsonar.tests=src \
             -Dsonar.test.inclusions=**/*.spec.ts \
-            -Dsonar.javascript.lcov.reportPaths=./coverage/bobapp/lcov.info \
+            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
 
