@@ -44,29 +44,23 @@ Ce document présente le pipeline CI/CD mis en place pour l'application **BobApp
     - Front-end : 50%
 - **Amélioration attendue** : ajouter progressivement des tests unitaires et d'intégration pour couvrir les cas critiques et les fonctionnalités sensibles, en priorité sur le back-end.
 
-### KPI 2 : Temps de résolution des bugs remontés par les utilisateurs
-- **Objectif cible** : résolution sous 5 jours ouvrés
-- **Mesuré via** : suivi des issues remontées et de leur date de clôture
-- **Justification** : les utilisateurs indiquent que certains bugs sont présents depuis plusieurs semaines sans avoir été corrigés.
-- **Amélioration attendue** : réduire la frustration client et renforcer la réactivité de l'équipe.
+### KPI 2 :  Note de sécurité (Security Rating)
+- **Objectif cible** : maintenir la note A et activer la Quality Gate en mode bloquant
+- **Mesuré via** : SonarCloud avec analyse statique des vulnérabilités
+- **Justification** : Sécuriser l’application face aux failles connues et prévenir les risques.
+- **Amélioration attendue** : Corriger immédiatement toute faille critique, mettre en place une vérification régulière des dépendances vulnérables.
 
 ### KPI 3 : Taux de disponibilité de la fonctionnalité critique "poster une blague"
 - **Objectif cible** : 99% de disponibilité
-- **Mesuré via** : logs d’erreurs serveur, monitoring applicatif, tests automatisés supplémentaires
-- **Justification** : le problème de plantage lors de l'envoi de blagues est récurrent et dégrade fortement l’expérience utilisateur.
-- **Amélioration attendue** : renforcer les tests end-to-end et améliorer la robustesse du traitement des créations de blague.
+- **Mesuré via** : erreurs serveur, logs, tests automatisés, monitoring
+- **Justification** :C’est la fonctionnalité cœur de l’application ; son instabilité génère des retours négatifs
+- **Amélioration attendue** : Mise en place de tests E2E, robustesse du back-end et retour d’erreurs côté front.
 
-### KPI 4 : Délai de première réponse aux utilisateurs (support client)
-- **Objectif cible** : répondre sous 48 heures
-- **Mesuré via** : temps moyen de réponse aux tickets de support
-- **Justification** : certains utilisateurs restent sans réponse plusieurs jours malgré des relances.
-- **Amélioration attendue** : définir un processus clair de gestion des tickets avec engagement de réponse rapide et suivi jusqu'à la résolution.
-
-### KPI 5 : Respect des Quality Gates SonarCloud
-- **Objectif cible** : 100% des builds doivent passer le Quality Gate de SonarCloud. 
-- **Mesuré via** : statut du Quality Gate sur SonarCloud après chaque analyse CI/CD
-- **Justification** : le Quality Gate garantit un haut niveau de qualité de code global en intégrant plusieurs indicateurs critiques (bugs, vulnérabilités, duplications, couverture sur le nouveau code, dette technique…).
-- **Amélioration attendue** : sensibiliser l'équipe à corriger systématiquement les anomalies détectées et intégrer les bonnes pratiques de qualité dès la phase de développement.
+### KPI 4 : Note de maintenabilité (Maintainability Rating)
+- **Objectif cible** : conserver la note A et activer la Quality Gate en mode bloquant
+- **Mesuré via** : SonarCloud : nombre de code smells, dette technique
+- **Justification** : Une bonne maintenabilité réduit les risques de régressions, facilite la lisibilité et l’évolution du projet.
+- **Amélioration attendue** : Refactoriser régulièrement, appliquer les bonnes pratiques dès l’écriture du code.
 
 ## Analyse des métriques
 

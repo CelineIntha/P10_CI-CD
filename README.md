@@ -1,57 +1,60 @@
 # BobApp
 
-Clone project:
+BobApp est une application web permettant aux utilisateurs de publier et consulter des blagues.  
+Elle repose sur un front-end Angular et un back-end Spring Boot.
 
-> git clone XXXXX
+## Sommaire
+- [Lancement avec Docker Compose](#lancement-du-projet-avec-docker-compose)
+- [CI/CD – GitHub Actions](#cicd--github-actions)
+- [Docker Hub](#docker-hub)
+- [SonarCloud](#sonarcloud)
 
-## Front-end 
+## Lancement du projet avec Docker Compose
 
-Go inside folder the front folder:
+### Prérequis
 
-> cd front
+- Docker installé sur votre machine
 
-Install dependencies:
+### Étapes
 
-> npm install
+Depuis la racine du projet :
 
-Launch Front-end:
+```bash
+docker-compose up --build
+```
+Les deux services seront lancés automatiquement :
 
-> npm run start;
+    front-end accessible sur : http://localhost:4200
 
-### Docker
+    back-end accessible sur : http://localhost:8080
 
-Build the container:
+Le front dépend automatiquement du back grâce à **depends_on**.
 
-> docker build -t bobapp-front .  
+## CI/CD – GitHub Actions
 
-Start the container:
+Un pipeline CI/CD est défini dans .github/workflows/build.yml.
 
-> docker run -p 8080:8080 --name bobapp-front -d bobapp-front
+Étapes principales automatisées :
+- Tests & couverture back-end
+- Tests & couverture front-end
+- Analyse qualité de code
+- Build & publication Docker
 
-## Back-end
+Les rapports sont visibles dans l’onglet Actions de GitHub.
 
-Go inside folder the back folder:
+## Docker Hub
 
-> cd back
+Les images générées sont disponibles sur Docker Hub :
 
-Install dependencies:
 
-> mvn clean install
+Images disponibles sur Docker Hub :
+- [`celineintha/p10-back`](https://hub.docker.com/r/celineintha/p10-back)
+- [`celineintha/p10-front`](https://hub.docker.com/r/celineintha/p10-front)
 
-Launch Back-end:
+## SonarCloud
 
->  mvn spring-boot:run
-
-Launch the tests:
-
-> mvn clean install
-
-### Docker
-
-Build the container:
-
-> docker build -t bobapp-back .  
-
-Start the container:
-
-> docker run -p 8080:8080 --name bobapp-back -d bobapp-back 
+Accès aux projets SonarCloud :
+```
+Back-end : https://sonarcloud.io/project/overview?id=CelineIntha_P10_CI-CD
+Front-end : https://sonarcloud.io/project/overview?id=celineintha-p10-ci-cd-front
+```
